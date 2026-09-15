@@ -33,7 +33,8 @@ def chat():
         )
         return jsonify(reply=result.output_text)
     except Exception as exc:
-        return jsonify(error=str(exc)), 500
+        print("OPENAI:", repr(exc), flush=True)
+        return jsonify(error="AI connection failed"), 500
 
 if __name__ == "__main__":
     app.run(host="127.0.0.1", port=int(os.environ.get("PORT", 5000)), debug=True)
