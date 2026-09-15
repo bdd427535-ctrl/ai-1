@@ -27,7 +27,7 @@ def chat():
 
     try:
         result = client.responses.create(
-            model=os.environ.get("OPENAI_MODEL", "gpt-5.6-mini"),
+            model=os.environ.get("OPENAI_MODEL", "gpt-5.6-luna"),
             instructions=SYSTEM_PROMPT,
             input=message
         )
