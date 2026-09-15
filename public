@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI (1)</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body { width:100%; height:100%; margin:0; }
+    body {
+      background:#fff;
+      overflow:hidden;
+      font-family: Arial, Helvetica, sans-serif;
+      color:#111;
+    }
+    #stage { position:fixed; inset:0; }
+    #orb {
+      position:absolute;
+      left:50%; top:50%;
+      width:24px; height:24px;
+      transform:translate(-50%,-50%);
+      border-radius:50%;
+      background:#e00000;
+      box-shadow:0 0 0 0 rgba(224,0,0,.15);
+      transition:transform .18s ease, box-shadow .18s ease;
+    }
+    #orb.thinking {
+      animation:pulse 1.15s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%,100% { transform:translate(-50%,-50%) scale(1); box-shadow:0 0 0 0 rgba(224,0,0,.16); }
+      50% { transform:translate(-50%,-50%) scale(1.25); box-shadow:0 0 0 13px rgba(224,0,0,0); }
+    }
+    #messages {
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+    }
+    .bubble {
+      position:absolute;
+      left:50%; top:50%;
+      max-width:min(680px, 78vw);
+      transform:translate(-50%,-50%);
+      font-size:18px;
+      line-height:1.5;
+      text-align:center;
+      opacity:0;
+      animation:drift 6.5s ease-out forwards;
+      white-space:pre-wrap;
+    }
+    @keyframes drift {
+      0%   { opacity:0; transform:translate(-50%,-44%) scale(.97); filter:blur(2px); }
+      12%  { opacity:1; transform:translate(-50%,-50%) scale(1); filter:blur(0); }
+      72%  { opacity:1; transform:translate(-50%,-68%) scale(1.01); }
+      100% { opacity:0; transform:translate(-50%,-88%) scale(1.02); filter:blur(1px); }
+    }
+    #composer {
+      position:absolute;
+      left:50%;
+      bottom:24px;
+      transform:translateX(-50%);
+      width:min(720px, calc(100vw - 32px));
+      display:flex;
+      align-items:center;
+      border:1px solid #ddd;
+      border-radius:10px;
+      background:#fff;
+      box-shadow:0 2px 12px rgba(0,0,0,.06);
+      padding:0 14px;
+    }
+    #input {
+      width:100%;
+      border:0;
+      outline:0;
+      padding:14px 2px;
+      font-size:16px;
+      background:transparent;
+    }
+    #hint {
+      position:absolute;
+      bottom:5px;
+      left:50%;
+      transform:translateX(-50%);
+      font-size:10px;
+      color:#aaa;
+      pointer-events:none;
+    }
+    .sending #input { color:#aaa; }
+  </style>
+</head>
+<body>
+  <main id="stage">
+    <div id="orb" aria-label="AI (1)"></div>
+    <div id="messages"></div>
+    <form id="composer" autocomplete="off">
+      <input id="input" aria-label="Message AI (1)" placeholder="Talk to AI (1)..." />
+    </form>
+    <div id="hint">Press Enter to send</div>
+  </main>
+
+<script>
+const form = document.getElementById("composer");
+const input = document.getElementById("input");
+const orb = document.getElementById("orb");
+const messages = document.getElementById("messages");
+
+form.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const text = input.value.trim();
+  if (!text) return;
+
+  input.value = "";
+  form.classList.add("sending");
+  orb.classList.add("thinking");
+
+  // Your message visually disappears into the center dot.
+  await new Promise(r => setTimeout(r, 450));
+
+  try {
+    const response = await fetch("/api/chat", {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({ message: text })
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || "Request failed");
+    showAnswer(data.reply);
+  } catch (error) {
+    showAnswer("AI (1) could not connect right now.");
+    console.error(error);
+  } finally {
+    orb.classList.remove("thinking");
+    form.classList.remove("sending");
+    input.focus();
+  }
+});
+
+function showAnswer(text) {
+  const bubble = document.createElement("div");
+  bubble.className = "bubble";
+  bubble.textContent = text;
+  messages.appendChild(bubble);
+  bubble.addEventListener("animationend", () => bubble.remove());
+}
+</script>
+</body>
+</html>
