@@ -1,147 +1,37 @@
 <!doctype html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI (1)</title>
-  <style>
-    * { box-sizing: border-box; }
-    html, body { width:100%; height:100%; margin:0; }
-    body {
-      background:#fff;
-      overflow:hidden;
-      font-family: Arial, Helvetica, sans-serif;
-      color:#111;
-    }
-    #stage { position:fixed; inset:0; }
-    #orb {
-      position:absolute;
-      left:50%; top:50%;
-      width:24px; height:24px;
-      transform:translate(-50%,-50%);
-      border-radius:50%;
-      background:#e00000;
-      box-shadow:0 0 0 0 rgba(224,0,0,.15);
-      transition:transform .18s ease, box-shadow .18s ease;
-    }
-    #orb.thinking {
-      animation:pulse 1.15s ease-in-out infinite;
-    }
-    @keyframes pulse {
-      0%,100% { transform:translate(-50%,-50%) scale(1); box-shadow:0 0 0 0 rgba(224,0,0,.16); }
-      50% { transform:translate(-50%,-50%) scale(1.25); box-shadow:0 0 0 13px rgba(224,0,0,0); }
-    }
-    #messages {
-      position:absolute;
-      inset:0;
-      pointer-events:none;
-    }
-    .bubble {
-      position:absolute;
-      left:50%; top:50%;
-      max-width:min(680px, 78vw);
-      transform:translate(-50%,-50%);
-      font-size:18px;
-      line-height:1.5;
-      text-align:center;
-      opacity:0;
-      animation:drift 6.5s ease-out forwards;
-      white-space:pre-wrap;
-    }
-    @keyframes drift {
-      0%   { opacity:0; transform:translate(-50%,-44%) scale(.97); filter:blur(2px); }
-      12%  { opacity:1; transform:translate(-50%,-50%) scale(1); filter:blur(0); }
-      72%  { opacity:1; transform:translate(-50%,-68%) scale(1.01); }
-      100% { opacity:0; transform:translate(-50%,-88%) scale(1.02); filter:blur(1px); }
-    }
-    #composer {
-      position:absolute;
-      left:50%;
-      bottom:24px;
-      transform:translateX(-50%);
-      width:min(720px, calc(100vw - 32px));
-      display:flex;
-      align-items:center;
-      border:1px solid #ddd;
-      border-radius:10px;
-      background:#fff;
-      box-shadow:0 2px 12px rgba(0,0,0,.06);
-      padding:0 14px;
-    }
-    #input {
-      width:100%;
-      border:0;
-      outline:0;
-      padding:14px 2px;
-      font-size:16px;
-      background:transparent;
-    }
-    #hint {
-      position:absolute;
-      bottom:5px;
-      left:50%;
-      transform:translateX(-50%);
-      font-size:10px;
-      color:#aaa;
-      pointer-events:none;
-    }
-    .sending #input { color:#aaa; }
-  </style>
-</head>
-<body>
-  <main id="stage">
-    <div id="orb" aria-label="AI (1)"></div>
-    <div id="messages"></div>
-    <form id="composer" autocomplete="off">
-      <input id="input" aria-label="Message AI (1)" placeholder="Talk to AI (1)..." />
-    </form>
-    <div id="hint">Press Enter to send</div>
-  </main>
-
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dotty</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#000;color:#fff;font-family:Arial,sans-serif}
+#world{position:relative;width:100vw;height:100vh;background:#000}
+#dot{position:absolute;left:50%;top:50%;width:18px;height:18px;transform:translate(-50%,-50%);border-radius:50%;background:#f22;box-shadow:0 0 10px #f22,0 0 30px #f22,0 0 60px #f224;z-index:10}
+.thinking{animation:pulse .7s infinite alternate}@keyframes pulse{to{transform:translate(-50%,-50%) scale(1.5)}}
+#answer{position:absolute;left:50%;top:50%;max-width:min(650px,65vw);font-size:clamp(17px,1.5vw,24px);line-height:1.55;opacity:0;pointer-events:none;z-index:8;text-shadow:0 0 12px #fff3}
+#answer.show{animation:drift 2.8s ease-out forwards}@keyframes drift{from{opacity:0;transform:translate(-50%,-50%) scale(.9)}to{opacity:1;transform:translate(calc(-50% + var(--x)),calc(-50% + var(--y))) scale(1)}}
+#input{position:absolute;bottom:28px;left:50%;transform:translateX(-50%);width:min(760px,calc(100% - 40px));display:flex;gap:10px;z-index:30}
+#msg{flex:1;height:50px;border:1px solid #222;border-radius:25px;background:#080808;color:#fff;padding:0 20px;font-size:16px;outline:0}
+#send{width:50px;height:50px;border:1px solid #333;border-radius:50%;background:#111;color:#fff;cursor:pointer}
+.g{position:absolute;width:12px;height:12px;border-radius:50%;z-index:9;animation:go .9s ease-in forwards}
+@keyframes go{0%{left:var(--sx);top:var(--sy);opacity:0;transform:scale(1.8)}15%{opacity:1}100%{left:50%;top:50%;opacity:0;transform:scale(.1)}}
+.shape{position:absolute;left:50%;top:50%;width:var(--s);height:var(--s);background:var(--c);z-index:7;opacity:0;box-shadow:0 0 10px var(--c),0 0 28px var(--c);animation:fly var(--d) ease-out forwards}
+.circle{border-radius:50%}.square{border-radius:12%}.blob{border-radius:60% 40% 35% 65%}.star{clip-path:polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 100%,50% 73%,21% 100%,32% 57%,2% 35%,39% 35%)}
+.triangle{width:0;height:0;background:transparent;box-shadow:none;border-left:calc(var(--s)/2) solid transparent;border-right:calc(var(--s)/2) solid transparent;border-bottom:var(--s) solid var(--c);filter:drop-shadow(0 0 10px var(--c))}
+@keyframes fly{0%{opacity:0;transform:translate(-50%,-50%) scale(.1)}15%{opacity:1}100%{left:var(--tx);top:var(--ty);opacity:0;transform:translate(-50%,-50%) rotate(var(--r)) scale(1)}}
+#status{position:absolute;left:50%;top:calc(50% + 35px);transform:translateX(-50%);font-size:11px;letter-spacing:3px;color:#555;opacity:0}
+#status.on{opacity:1}
+</style></head>
+<body><div id="world"><div id="dot"></div><div id="status">THINKING</div><div id="answer"></div>
+<form id="input"><input id="msg" placeholder="Talk to Dotty..." autocomplete="off"><button id="send">➜</button></form></div>
 <script>
-const form = document.getElementById("composer");
-const input = document.getElementById("input");
-const orb = document.getElementById("orb");
-const messages = document.getElementById("messages");
-
-form.addEventListener("submit", async (event) => {
-  event.preventDefault();
-  const text = input.value.trim();
-  if (!text) return;
-
-  input.value = "";
-  form.classList.add("sending");
-  orb.classList.add("thinking");
-
-  // Your message visually disappears into the center dot.
-  await new Promise(r => setTimeout(r, 450));
-
-  try {
-    const response = await fetch("/api/chat", {
-      method: "POST",
-      headers: {"Content-Type":"application/json"},
-      body: JSON.stringify({ message: text })
-    });
-    const data = await response.json();
-    if (!response.ok) throw new Error(data.error || "Request failed");
-    showAnswer(data.reply);
-  } catch (error) {
-    showAnswer("AI (1) could not connect right now.");
-    console.error(error);
-  } finally {
-    orb.classList.remove("thinking");
-    form.classList.remove("sending");
-    input.focus();
-  }
-});
-
-function showAnswer(text) {
-  const bubble = document.createElement("div");
-  bubble.className = "bubble";
-  bubble.textContent = text;
-  messages.appendChild(bubble);
-  bubble.addEventListener("animationend", () => bubble.remove());
-}
-</script>
-</body>
-</html>
+const w=document.getElementById('world'),dot=document.getElementById('dot'),msg=document.getElementById('msg'),answer=document.getElementById('answer'),status=document.getElementById('status');
+const colors=['#28ff88','#38a8ff','#ff304f','#c45cff','#ffe04a'],types=['circle','square','triangle','star','blob'];
+function clearAnswer(){answer.className='';answer.textContent=''}
+msg.oninput=()=>{if(msg.value.trim())clearAnswer()};
+function glope(){for(let i=0;i<11;i++){let e=document.createElement('div');e.className='g';let c=colors[Math.random()*colors.length|0];e.style.background=c;e.style.boxShadow=`0 0 10px ${c},0 0 25px ${c}`;e.style.setProperty('--sx',`${44+Math.random()*12}vw`);e.style.setProperty('--sy',`${76+Math.random()*8}vh`);e.style.animationDelay=i*.035+'s';w.appendChild(e);setTimeout(()=>e.remove(),1200)}}
+function shapes(){for(let i=0;i<5;i++){let e=document.createElement('div'),t=types[Math.random()*types.length|0],c=colors[Math.random()*colors.length|0];e.className='shape '+t;e.style.setProperty('--c',c);e.style.setProperty('--s',12+Math.random()*30+'px');e.style.setProperty('--tx',10+Math.random()*80+'vw');e.style.setProperty('--ty',10+Math.random()*70+'vh');e.style.setProperty('--d',1.5+Math.random()*1.7+'s');e.style.setProperty('--r',Math.random()*900-450+'deg');e.style.animationDelay=i*.08+'s';w.appendChild(e);setTimeout(()=>e.remove(),4000)}}
+function show(text){answer.textContent=text;answer.style.setProperty('--x',Math.random()*220-110+'px');answer.style.setProperty('--y',Math.random()*180-90+'px');answer.className='show'}
+async function ask(text){glope();dot.classList.add('thinking');status.classList.add('on');try{let r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:text})});let d=await r.json();if(!r.ok)throw Error(d.error);status.classList.remove('on');dot.classList.remove('thinking');shapes();setTimeout(()=>show(d.reply||'Dotty has nothing to say.'),500)}catch(e){status.classList.remove('on');dot.classList.remove('thinking');shapes();setTimeout(()=>show('Something went wrong. Dotty blames the universe.'),500)}}
+document.getElementById('input').onsubmit=e=>{e.preventDefault();let t=msg.value.trim();if(!t)return;msg.value='';clearAnswer();ask(t)}
+</script></body></html>
