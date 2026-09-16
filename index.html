@@ -21,8 +21,57 @@
 @keyframes fly{0%{opacity:0;transform:translate(-50%,-50%) scale(.1)}15%{opacity:1}100%{left:var(--tx);top:var(--ty);opacity:0;transform:translate(-50%,-50%) rotate(var(--r)) scale(1)}}
 #status{position:absolute;left:50%;top:calc(50% + 35px);transform:translateX(-50%);font-size:11px;letter-spacing:3px;color:#555;opacity:0}
 #status.on{opacity:1}
-</style></head>
-<body><div id="world"><div id="dot"></div><div id="status">THINKING</div><div id="answer"></div>
+</style>#lockScreen {
+  position: fixed;
+  inset: 0;
+  background: white;
+  color: black;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  z-index: 9999;
+  font-family: Arial, sans-serif;
+}
+
+#lockScreen h1 {
+  margin: 0;
+  font-size: 32px;
+}
+
+#codeInput {
+  width: 260px;
+  height: 44px;
+  padding: 0 14px;
+  border: 1px solid #aaa;
+  border-radius: 8px;
+  font-size: 16px;
+  outline: none;
+}
+
+#codeButton {
+  width: 100px;
+  height: 40px;
+  border: 0;
+  border-radius: 8px;
+  background: #111;
+  color: white;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+#codeError {
+  margin: 0;
+  color: #d00;
+  min-height: 18px;
+}</head>
+<body><div id="lockScreen">
+  <h1>Code Needed</h1>
+  <input id="codeInput" type="password" placeholder="Enter password">
+  <button id="codeButton">Enter</button>
+  <p id="codeError"></p>
+</div><div id="world"><div id="dot"></div><div id="status">THINKING</div><div id="answer"></div>
 <form id="input"><input id="msg" placeholder="Talk to Dotty..." autocomplete="off"><button id="send">➜</button></form></div>
 <script>
 const w=document.getElementById('world'),dot=document.getElementById('dot'),msg=document.getElementById('msg'),answer=document.getElementById('answer'),status=document.getElementById('status');
@@ -34,4 +83,23 @@ function shapes(){for(let i=0;i<5;i++){let e=document.createElement('div'),t=typ
 function show(text){answer.textContent=text;answer.style.setProperty('--x',Math.random()*220-110+'px');answer.style.setProperty('--y',Math.random()*180-90+'px');answer.className='show'}
 async function ask(text){glope();dot.classList.add('thinking');status.classList.add('on');try{let r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:text})});let d=await r.json();if(!r.ok)throw Error(d.error);status.classList.remove('on');dot.classList.remove('thinking');shapes();setTimeout(()=>show(d.reply||'Dotty has nothing to say.'),500)}catch(e){status.classList.remove('on');dot.classList.remove('thinking');shapes();setTimeout(()=>show('Something went wrong. Dotty blames the universe.'),500)}}
 document.getElementById('input').onsubmit=e=>{e.preventDefault();let t=msg.value.trim();if(!t)return;msg.value='';clearAnswer();ask(t)}
-</script></body></html>
+const lockScreen = document.getElementById("lockScreen");
+const codeInput = document.getElementById("codeInput");
+const codeButton = document.getElementById("codeButton");
+const codeError = document.getElementById("codeError");
+
+codeButton.addEventListener("click", () => {
+  if (codeInput.value === "D0rian:)") {
+    lockScreen.style.display = "none";
+  } else {
+    codeError.textContent = "Incorrect code.";
+    codeInput.value = "";
+    codeInput.focus();
+  }
+});
+
+codeInput.addEventListener("keydown", (event) => {
+  if (event.key === "Enter") {
+    codeButton.click();
+  }
+});</script></body></html>
