@@ -30,6 +30,21 @@
 .triangle{clip-path:polygon(50% 0,100% 100%,0 100%);background:transparent;border:2px solid var(--c);filter:drop-shadow(0 0 10px var(--c))}
 @keyframes fly{0%{opacity:0;transform:translate(-50%,-50%) scale(.1)}15%{opacity:1}100%{left:var(--tx);top:var(--ty);opacity:0;transform:translate(-50%,-50%) rotate(var(--r)) scale(1)}}
 #status{position:absolute;left:50%;top:calc(50% + 35px);transform:translateX(-50%);font-size:11px;letter-spacing:3px;color:#555;opacity:0}
+  #switchButton{
+  position:fixed;
+  right:25px;
+  bottom:25px;
+  width:55px;
+  height:55px;
+  border-radius:50%;
+  border:1px solid #b44cff;
+  background:#5b16a8;
+  color:#fff;
+  font-size:22px;
+  cursor:pointer;
+  z-index:50;
+  box-shadow:0 0 10px #b44cff,0 0 30px #8a2be2,0 0 55px #8a2be288;
+}
 #status.on{opacity:1}
 #lockScreen {
   position: fixed;
@@ -84,10 +99,26 @@
   <button id="codeButton">Enter</button>
   <p id="codeError"></p>
 </div><div id="world"><div id="dot"></div><div id="status">THINKING</div><div id="answer"></div>
-<form id="input"><input id="msg" placeholder="Talk to Dotty..." autocomplete="off"><button id="send">➜</button></form></div>
+<form id="input"><input id="msg" placeholder="Talk to Dotty..." autocomplete="off"><button id="send">➜</button></form>
+<button id="switchButton">●</button>
+</div>
 <script>
-const w=document.getElementById('world'),dot=document.getElementById('dot'),msg=document.getElementById('msg'),answer=document.getElementById('answer'),status=document.getElementById('status');
-const colors=['#28ff88','#38a8ff','#ff304f','#c45cff','#ffe04a'],types=['circle','square','triangle','star','blob'];
+const w=document.getElementById('world'),dot=document.getElementById('dot'),msg=document.getElementById('msg'),answer=document.getElementById('answer'),status=document.getElementById('status'),switchButton=document.getElementById('switchButton')
+let bubbleMode=false;
+  switchButton.addEventListener('click',()=>{
+  bubbleMode=!bubbleMode;
+
+  if(bubbleMode){
+    dot.style.background='#2080ff';
+    dot.style.boxShadow='0 0 10px #2080ff,0 0 30px #2080ff,0 0 60px #2080ff66';
+    switchButton.style.background='#32105f';
+  }else{
+    dot.style.background='#f22';
+    dot.style.boxShadow='0 0 10px #f22,0 0 30px #f22,0 0 60px #f224';
+    switchButton.style.background='#5b16a8';
+  }
+});
+  const colors=['#28ff88','#38a8ff','#ff304f','#c45cff','#ffe04a'],types=['circle','square','triangle','star','blob'];
 function clearAnswer(){answer.className='';answer.textContent=''}
 msg.oninput=()=>{if(msg.value.trim())clearAnswer()};
 function glope(){
@@ -142,7 +173,7 @@ async function ask(text){
     let r=await fetch('/api/chat',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({message:text})
+body:JSON.stringify({message:text,bubble:bubbleMode})
     });
 
     let d=await r.json();
