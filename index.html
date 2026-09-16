@@ -7,17 +7,27 @@
 *{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#000;color:#fff;font-family:Arial,sans-serif}
 #world{position:relative;width:100vw;height:100vh;background:#000}
 #dot{position:absolute;left:50%;top:50%;width:18px;height:18px;transform:translate(-50%,-50%);border-radius:50%;background:#f22;box-shadow:0 0 10px #f22,0 0 30px #f22,0 0 60px #f224;z-index:10}
-.thinking{animation:pulse .7s infinite alternate}@keyframes pulse{to{transform:translate(-50%,-50%) scale(1.5)}}
+.thinking{animation:pulse .7s infinite alternate,flash 1s infinite}
+@keyframes flash{
+  0%,100%{background:#f22;box-shadow:0 0 10px #f22,0 0 30px #f22,0 0 60px #f224}
+  50%{background:#28f;box-shadow:0 0 10px #28f,0 0 30px #28f,0 0 60px #28f}
+}
 #answer{position:absolute;left:50%;top:50%;max-width:min(650px,65vw);font-size:clamp(17px,1.5vw,24px);line-height:1.55;opacity:0;pointer-events:none;z-index:8;text-shadow:0 0 12px #fff3}
 #answer.show{animation:drift 2.8s ease-out forwards}@keyframes drift{from{opacity:0;transform:translate(-50%,-50%) scale(.9)}to{opacity:1;transform:translate(calc(-50% + var(--x)),calc(-50% + var(--y))) scale(1)}}
 #input{position:absolute;bottom:28px;left:50%;transform:translateX(-50%);width:min(760px,calc(100% - 40px));display:flex;gap:10px;z-index:30}
 #msg{flex:1;height:50px;border:1px solid #222;border-radius:25px;background:#080808;color:#fff;padding:0 20px;font-size:16px;outline:0}
 #send{width:50px;height:50px;border:1px solid #333;border-radius:50%;background:#111;color:#fff;cursor:pointer}
-.g{position:absolute;width:12px;height:12px;border-radius:50%;z-index:9;animation:go .9s ease-in forwards}
-@keyframes go{0%{left:var(--sx);top:var(--sy);opacity:0;transform:scale(1.8)}15%{opacity:1}100%{left:50%;top:50%;opacity:0;transform:scale(.1)}}
-.shape{position:absolute;left:50%;top:50%;width:var(--s);height:var(--s);background:var(--c);z-index:7;opacity:0;box-shadow:0 0 10px var(--c),0 0 28px var(--c);animation:fly var(--d) ease-out forwards}
-.circle{border-radius:50%}.square{border-radius:12%}.blob{border-radius:60% 40% 35% 65%}.star{clip-path:polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 100%,50% 73%,21% 100%,32% 57%,2% 35%,39% 35%)}
-.triangle{width:0;height:0;background:transparent;box-shadow:none;border-left:calc(var(--s)/2) solid transparent;border-right:calc(var(--s)/2) solid transparent;border-bottom:var(--s) solid var(--c);filter:drop-shadow(0 0 10px var(--c))}
+.g{position:absolute;width:12px;height:12px;border-radius:50%;z-index:11;animation:go 10s ease-in-out forwards}
+@keyframes go{
+  0%{left:var(--sx);top:var(--sy);opacity:0;transform:scale(.4)}
+  8%{opacity:1}
+  75%{opacity:1}
+  90%{opacity:.9}
+  100%{left:50%;top:50%;opacity:0;transform:scale(1.8)}
+}
+.shape{position:absolute;left:50%;top:50%;width:var(--s);height:var(--s);background:transparent;border:2px solid var(--c);z-index:7;opacity:0;box-shadow:0 0 10px var(--c),0 0 28px var(--c),0 0 50px var(--c);animation:fly var(--d) ease-out forwards}
+.circle{border-radius:50%}.square{border-radius:12%;transform:rotate(20deg)}.blob{border-radius:60% 40% 35% 65%}.star{clip-path:polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 100%,50% 73%,21% 100%,32% 57%,2% 35%,39% 35%)}
+.triangle{clip-path:polygon(50% 0,100% 100%,0 100%);background:transparent;border:2px solid var(--c);filter:drop-shadow(0 0 10px var(--c))}
 @keyframes fly{0%{opacity:0;transform:translate(-50%,-50%) scale(.1)}15%{opacity:1}100%{left:var(--tx);top:var(--ty);opacity:0;transform:translate(-50%,-50%) rotate(var(--r)) scale(1)}}
 #status{position:absolute;left:50%;top:calc(50% + 35px);transform:translateX(-50%);font-size:11px;letter-spacing:3px;color:#555;opacity:0}
 #status.on{opacity:1}
@@ -80,10 +90,82 @@ const w=document.getElementById('world'),dot=document.getElementById('dot'),msg=
 const colors=['#28ff88','#38a8ff','#ff304f','#c45cff','#ffe04a'],types=['circle','square','triangle','star','blob'];
 function clearAnswer(){answer.className='';answer.textContent=''}
 msg.oninput=()=>{if(msg.value.trim())clearAnswer()};
-function glope(){for(let i=0;i<11;i++){let e=document.createElement('div');e.className='g';let c=colors[Math.random()*colors.length|0];e.style.background=c;e.style.boxShadow=`0 0 10px ${c},0 0 25px ${c}`;e.style.setProperty('--sx',`${44+Math.random()*12}vw`);e.style.setProperty('--sy',`${76+Math.random()*8}vh`);e.style.animationDelay=i*.035+'s';w.appendChild(e);setTimeout(()=>e.remove(),1200)}}
-function shapes(){for(let i=0;i<5;i++){let e=document.createElement('div'),t=types[Math.random()*types.length|0],c=colors[Math.random()*colors.length|0];e.className='shape '+t;e.style.setProperty('--c',c);e.style.setProperty('--s',12+Math.random()*30+'px');e.style.setProperty('--tx',10+Math.random()*80+'vw');e.style.setProperty('--ty',10+Math.random()*70+'vh');e.style.setProperty('--d','9s');e.style.setProperty('--r',Math.random()*900-450+'deg');e.style.animationDelay=i*.08+'s';w.appendChild(e);setTimeout(()=>e.remove(),4000)}}
+function glope(){
+  const glopColors=['#ff2020','#2080ff','#20ff70'];
+  const c=glopColors[Math.random()*glopColors.length|0];
+  const fromLeft=Math.random()<0.5;
+
+  for(let i=0;i<18;i++){
+    let e=document.createElement('div');
+    e.className='g';
+    e.style.background=c;
+    e.style.boxShadow=`0 0 10px ${c},0 0 25px ${c},0 0 50px ${c}`;
+    e.style.setProperty('--sx',fromLeft?`${-5+Math.random()*18}vw`:`${87+Math.random()*18}vw`);
+    e.style.setProperty('--sy',`${-5+Math.random()*25}vh`);
+    e.style.animationDelay=i*.12+'s';
+    w.appendChild(e);
+    setTimeout(()=>e.remove(),12000);
+  }
+}
+function shapes(){
+  const shapeTypes=['circle','square','triangle','star','blob'];
+  const shapeColors=['#28ff88','#ffe04a','#c45cff','#38a8ff','#ff304f'];
+
+  for(let i=0;i<5;i++){
+    let e=document.createElement('div');
+    let t=shapeTypes[Math.random()*shapeTypes.length|0];
+    let c=shapeColors[Math.random()*shapeColors.length|0];
+
+    e.className='shape '+t;
+    e.style.setProperty('--c',c);
+    e.style.setProperty('--s',18+Math.random()*42+'px');
+    e.style.setProperty('--tx',Math.random()*100+'vw');
+    e.style.setProperty('--ty',Math.random()*100+'vh');
+    e.style.setProperty('--d','9s');
+    e.style.setProperty('--r',Math.random()*1440-720+'deg');
+    e.style.animationDelay=i*.15+'s';
+
+    w.appendChild(e);
+    setTimeout(()=>e.remove(),10000);
+  }
+}
 function show(text){answer.textContent=text;answer.style.setProperty('--x',Math.random()*220-110+'px');answer.style.setProperty('--y',Math.random()*180-90+'px');answer.className='show'}
-async function ask(text){glope();dot.classList.add('thinking');status.classList.add('on');try{let r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:text})});let d=await r.json();if(!r.ok)throw Error(d.error);status.classList.remove('on');dot.classList.remove('thinking');shapes();setTimeout(()=>show(d.reply||'Dotty has nothing to say.'),500)}catch(e){status.classList.remove('on');dot.classList.remove('thinking');shapes();setTimeout(()=>show('Something went wrong. Dotty blames the universe.'),500)}}
+async function ask(text){
+  glope();
+  
+  await new Promise(resolve=>setTimeout(resolve,10000));
+
+  dot.classList.add('thinking');
+  status.classList.add('on');
+
+  try{
+    let r=await fetch('/api/chat',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({message:text})
+    });
+
+    let d=await r.json();
+    if(!r.ok)throw Error(d.error);
+
+    await new Promise(resolve=>setTimeout(resolve,1200));
+
+    status.classList.remove('on');
+    dot.classList.remove('thinking');
+
+    shapes();
+
+    setTimeout(()=>show(d.reply||'Dotty has nothing to say.'),700);
+
+  }catch(e){
+    status.classList.remove('on');
+    dot.classList.remove('thinking');
+
+    shapes();
+
+    setTimeout(()=>show('Something went wrong. Dotty blames the universe.'),700);
+  }
+}
 document.getElementById('input').onsubmit=e=>{e.preventDefault();let t=msg.value.trim();if(!t)return;msg.value='';clearAnswer();ask(t)}
 const lockScreen = document.getElementById("lockScreen");
 const codeInput = document.getElementById("codeInput");
