@@ -30,6 +30,40 @@
 .triangle{clip-path:polygon(50% 0,100% 100%,0 100%);background:transparent;border:2px solid var(--c);filter:drop-shadow(0 0 10px var(--c))}
 @keyframes fly{0%{opacity:0;transform:translate(-50%,-50%) scale(.1)}15%{opacity:1}100%{left:var(--tx);top:var(--ty);opacity:0;transform:translate(-50%,-50%) rotate(var(--r)) scale(1)}}
 #status{position:absolute;left:50%;top:calc(50% + 35px);transform:translateX(-50%);font-size:11px;letter-spacing:3px;color:#555;opacity:0}
+  .switch-orb{
+  position:absolute;
+  right:-30px;
+  top:50%;
+  width:18px;
+  height:18px;
+  border-radius:50%;
+  transform:translateY(-50%);
+  z-index:20;
+  animation:eatDot 1.8s ease-in-out forwards;
+}
+
+@keyframes eatDot{
+  0%{
+    right:-30px;
+    transform:translateY(-50%) scale(.7);
+    opacity:0;
+  }
+
+  15%{
+    opacity:1;
+  }
+
+  70%{
+    right:50%;
+    transform:translate(50%,-50%) scale(1);
+  }
+
+  100%{
+    right:50%;
+    transform:translate(50%,-50%) scale(3);
+    opacity:0;
+  }
+}
   #switchButton{
   position:fixed;
   right:25px;
@@ -105,18 +139,43 @@
 <script>
 const w=document.getElementById('world'),dot=document.getElementById('dot'),msg=document.getElementById('msg'),answer=document.getElementById('answer'),status=document.getElementById('status'),switchButton=document.getElementById('switchButton')
 let bubbleMode=false;
-  switchButton.addEventListener('click',()=>{
-  bubbleMode=!bubbleMode;
+let switching=false;
 
-  if(bubbleMode){
-    dot.style.background='#2080ff';
-    dot.style.boxShadow='0 0 10px #2080ff,0 0 30px #2080ff,0 0 60px #2080ff66';
-    switchButton.style.background='#32105f';
+switchButton.addEventListener('click',()=>{
+  if(switching) return;
+  switching=true;
+
+  const targetBubble=!bubbleMode;
+  const orb=document.createElement('div');
+
+  orb.className='switch-orb';
+
+  if(targetBubble){
+    orb.style.background='#2080ff';
+    orb.style.boxShadow='0 0 10px #2080ff,0 0 30px #2080ff,0 0 60px #2080ff66';
   }else{
-    dot.style.background='#f22';
-    dot.style.boxShadow='0 0 10px #f22,0 0 30px #f22,0 0 60px #f224';
-    switchButton.style.background='#5b16a8';
+    orb.style.background='#f22';
+    orb.style.boxShadow='0 0 10px #f22,0 0 30px #f22,0 0 60px #f224';
   }
+
+  w.appendChild(orb);
+
+  setTimeout(()=>{
+    bubbleMode=targetBubble;
+
+    if(bubbleMode){
+      dot.style.background='#2080ff';
+      dot.style.boxShadow='0 0 10px #2080ff,0 0 30px #2080ff,0 0 60px #2080ff66';
+      switchButton.style.background='#32105f';
+    }else{
+      dot.style.background='#f22';
+      dot.style.boxShadow='0 0 10px #f22,0 0 30px #f22,0 0 60px #f224';
+      switchButton.style.background='#5b16a8';
+    }
+
+    orb.remove();
+    switching=false;
+  },1800);
 });
   const colors=['#28ff88','#38a8ff','#ff304f','#c45cff','#ffe04a'],types=['circle','square','triangle','star','blob'];
 function clearAnswer(){answer.className='';answer.textContent=''}
