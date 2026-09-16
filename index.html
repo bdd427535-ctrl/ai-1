@@ -21,7 +21,7 @@
 @keyframes fly{0%{opacity:0;transform:translate(-50%,-50%) scale(.1)}15%{opacity:1}100%{left:var(--tx);top:var(--ty);opacity:0;transform:translate(-50%,-50%) rotate(var(--r)) scale(1)}}
 #status{position:absolute;left:50%;top:calc(50% + 35px);transform:translateX(-50%);font-size:11px;letter-spacing:3px;color:#555;opacity:0}
 #status.on{opacity:1}
-</style>#lockScreen {
+#lockScreen {
   position: fixed;
   inset: 0;
   background: white;
@@ -65,7 +65,9 @@
   margin: 0;
   color: #d00;
   min-height: 18px;
-}</head>
+}
+</style>
+</head>
 <body><div id="lockScreen">
   <h1>Code Needed</h1>
   <input id="codeInput" type="password" placeholder="Enter password">
