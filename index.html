@@ -92,19 +92,10 @@
   background:transparent;
   border:2px solid var(--c);
   box-shadow:0 0 4px var(--c),0 0 12px var(--c);
+  animation:fly var(--d) ease-out forwards;
 }
-const shapeTypes=['circle','square','triangle','star','hexagon'];
-  .hexagon{
-  clip-path:polygon(
-    25% 0%,
-    75% 0%,
-    100% 50%,
-    75% 100%,
-    25% 100%,
-    0% 50%
-  );
-}
-  .circle{
+
+.circle{
   border-radius:50%;
 }
 
@@ -117,6 +108,52 @@ const shapeTypes=['circle','square','triangle','star','hexagon'];
 }
 
 .star{
+  clip-path:polygon(
+    50% 0%,
+    61% 35%,
+    98% 35%,
+    68% 57%,
+    79% 95%,
+    50% 72%,
+    21% 95%,
+    32% 57%,
+    2% 35%,
+    39% 35%
+  );
+}
+
+.hexagon{
+  clip-path:polygon(
+    25% 0%,
+    75% 0%,
+    100% 50%,
+    75% 100%,
+    25% 100%,
+    0% 50%
+  );
+}
+
+@keyframes fly{
+  0%{
+    opacity:0;
+    transform:translate(-50%,-50%) scale(.1);
+  }
+
+  15%{
+    opacity:1;
+  }
+
+  85%{
+    opacity:1;
+  }
+
+  100%{
+    left:var(--tx);
+    top:var(--ty);
+    opacity:0;
+    transform:translate(-50%,-50%) rotate(var(--r)) scale(1);
+  }
+}
   clip-path:polygon(
     50% 0%,
     61% 35%,
