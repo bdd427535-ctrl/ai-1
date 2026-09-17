@@ -85,8 +85,51 @@
   90%{opacity:.9}
   100%{left:50%;top:50%;opacity:0;transform:scale(1.8)}
 }
-.shape{position:absolute;left:50%;top:50%;width:var(--s);height:var(--s);background:transparent;border:2px solid var(--c);z-index:7;opacity:0;box-shadow:0 0 10px var(--c),0 0 28px var(--c),0 0 50px var(--c);animation:fly var(--d) ease-out forwards}
-.circle{border-radius:50%}.square{border-radius:12%;transform:rotate(20deg)}.blob{border-radius:60% 40% 35% 65%}.star{clip-path:polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 100%,50% 73%,21% 100%,32% 57%,2% 35%,39% 35%)}
+.shape{
+  position:absolute;
+  width:var(--s);
+  height:var(--s);
+  background:transparent;
+  border:2px solid var(--c);
+  box-shadow:0 0 4px var(--c),0 0 12px var(--c);
+}
+const shapeTypes=['circle','square','triangle','star','hexagon'];
+  .hexagon{
+  clip-path:polygon(
+    25% 0%,
+    75% 0%,
+    100% 50%,
+    75% 100%,
+    25% 100%,
+    0% 50%
+  );
+}
+  .circle{
+  border-radius:50%;
+}
+
+.square{
+  border-radius:0;
+}
+
+.triangle{
+  clip-path:polygon(50% 0%,100% 100%,0% 100%);
+}
+
+.star{
+  clip-path:polygon(
+    50% 0%,
+    61% 35%,
+    98% 35%,
+    68% 57%,
+    79% 95%,
+    50% 72%,
+    21% 95%,
+    32% 57%,
+    2% 35%,
+    39% 35%
+  );
+}
 .triangle{clip-path:polygon(50% 0,100% 100%,0 100%);background:transparent;border:2px solid var(--c);filter:drop-shadow(0 0 10px var(--c))}
 @keyframes fly{0%{opacity:0;transform:translate(-50%,-50%) scale(.1)}15%{opacity:1}100%{left:var(--tx);top:var(--ty);opacity:0;transform:translate(-50%,-50%) rotate(var(--r)) scale(1)}}
 #status{position:absolute;left:50%;top:calc(50% + 35px);transform:translateX(-50%);font-size:11px;letter-spacing:3px;color:#555;opacity:0}
