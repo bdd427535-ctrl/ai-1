@@ -356,7 +356,23 @@ function shapes(){
     setTimeout(()=>e.remove(),9500);
   }
 }
-function show(text){answer.textContent=text;answer.style.setProperty('--x',Math.random()*220-110+'px');answer.style.setProperty('--y',Math.random()*180-90+'px');answer.className='show'}
+function show(text){
+  answer.textContent=text;
+  answer.style.setProperty('--x',Math.random()*220-110+'px');
+  answer.style.setProperty('--y',Math.random()*180-90+'px');
+  answer.className='show';
+
+  setTimeout(()=>{
+    speechSynthesis.cancel();
+
+    const voice=new SpeechSynthesisUtterance(text);
+    voice.rate=1;
+    voice.pitch=bubbleMode ? 0.85 : 1;
+    voice.volume=1;
+
+    speechSynthesis.speak(voice);
+  },800);
+}
 async function ask(text){
   glope();
 
