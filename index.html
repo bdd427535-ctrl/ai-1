@@ -154,21 +154,6 @@
     transform:translate(-50%,-50%) rotate(var(--r)) scale(1);
   }
 }
-  clip-path:polygon(
-    50% 0%,
-    61% 35%,
-    98% 35%,
-    68% 57%,
-    79% 95%,
-    50% 72%,
-    21% 95%,
-    32% 57%,
-    2% 35%,
-    39% 35%
-  );
-}
-.triangle{clip-path:polygon(50% 0,100% 100%,0 100%);background:transparent;border:2px solid var(--c);filter:drop-shadow(0 0 10px var(--c))}
-@keyframes fly{0%{opacity:0;transform:translate(-50%,-50%) scale(.1)}15%{opacity:1}100%{left:var(--tx);top:var(--ty);opacity:0;transform:translate(-50%,-50%) rotate(var(--r)) scale(1)}}
 #status{position:absolute;left:50%;top:calc(50% + 35px);transform:translateX(-50%);font-size:11px;letter-spacing:3px;color:#555;opacity:0}
   .switch-orb{
   position:absolute;
@@ -315,9 +300,8 @@ switchButton.addEventListener('click',()=>{
 
     orb.remove();
     switching=false;
-  },1800);
+  },2800);
 });
-  const colors=['#28ff88','#38a8ff','#ff304f','#c45cff','#ffe04a'],types=['circle','square','triangle','star','blob'];
 function clearAnswer(){answer.className='';answer.textContent=''}
 msg.oninput=()=>{if(msg.value.trim())clearAnswer()};
 function glope(){
@@ -372,29 +356,10 @@ function shapes(){
     setTimeout(()=>e.remove(),9500);
   }
 }
-
-for(let i=0;i<70;i++){
-    let e=document.createElement('div');
-    let t=shapeTypes[Math.random()*shapeTypes.length|0];
-    let c=shapeColors[Math.random()*shapeColors.length|0];
-
-    e.className='shape '+t;
-    e.style.setProperty('--c',c);
-    e.style.setProperty('--s',18+Math.random()*42+'px');
-    e.style.setProperty('--tx',Math.random()*100+'vw');
-    e.style.setProperty('--ty',Math.random()*100+'vh');
-    e.style.setProperty('--d','9s');
-    e.style.setProperty('--r',Math.random()*1440-720+'deg');
-    e.style.animationDelay=i*.15+'s';
-
-    w.appendChild(e);
-    setTimeout(()=>e.remove(),10000);
-  }
-}
 function show(text){answer.textContent=text;answer.style.setProperty('--x',Math.random()*220-110+'px');answer.style.setProperty('--y',Math.random()*180-90+'px');answer.className='show'}
 async function ask(text){
   glope();
-  
+
   await new Promise(resolve=>setTimeout(resolve,10000));
 
   dot.classList.add('thinking');
