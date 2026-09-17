@@ -7,10 +7,62 @@
 *{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#000;color:#fff;font-family:Arial,sans-serif}
 #world{position:relative;width:100vw;height:100vh;background:#000}
 #dot{position:absolute;left:50%;top:50%;width:18px;height:18px;transform:translate(-50%,-50%);border-radius:50%;background:#f22;box-shadow:0 0 10px #f22,0 0 30px #f22,0 0 60px #f224;z-index:10}
-.thinking{animation:pulse .7s infinite alternate,flash 1s infinite}
-@keyframes flash{
-  0%,100%{background:#f22;box-shadow:0 0 10px #f22,0 0 30px #f22,0 0 60px #f224}
-  50%{background:#28f;box-shadow:0 0 10px #28f,0 0 30px #28f,0 0 60px #28f}
+.thinking{
+  animation:glitchPulse .18s infinite steps(2),glitchFlash .32s infinite steps(2);
+}
+@keyframes glitchFlash{
+  0%{
+    background:#f22;
+    box-shadow:0 0 10px #f22,0 0 30px #f22,0 0 60px #f224;
+  }
+
+  35%{
+    background:#28f;
+    box-shadow:0 0 5px #28f,0 0 20px #28f,0 0 70px #28f;
+  }
+
+  55%{
+    background:#f22;
+    box-shadow:0 0 20px #f22,0 0 45px #f22,0 0 80px #f224;
+  }
+
+  75%{
+    opacity:.25;
+  }
+
+  80%{
+    opacity:1;
+  }
+
+  100%{
+    background:#28f;
+  }
+}
+
+@keyframes glitchPulse{
+  0%{
+    transform:translate(-50%,-50%) scale(1);
+  }
+
+  20%{
+    transform:translate(calc(-50% + 2px),-50%) scale(.8);
+  }
+
+  40%{
+    transform:translate(calc(-50% - 3px),calc(-50% + 2px)) scale(1.25);
+  }
+
+  60%{
+    transform:translate(-50%,calc(-50% - 2px)) scale(.65);
+  }
+
+  80%{
+    transform:translate(calc(-50% + 3px),-50%) scale(1.1);
+  }
+
+  100%{
+    transform:translate(-50%,-50%) scale(1);
+  }
 }
 #answer{position:absolute;left:50%;top:50%;max-width:min(650px,65vw);font-size:clamp(17px,1.5vw,24px);line-height:1.55;opacity:0;pointer-events:none;z-index:8;text-shadow:0 0 12px #fff3}
 #answer.show{animation:drift 2.8s ease-out forwards}@keyframes drift{from{opacity:0;transform:translate(-50%,-50%) scale(.9)}to{opacity:1;transform:translate(calc(-50% + var(--x)),calc(-50% + var(--y))) scale(1)}}
@@ -226,6 +278,7 @@ async function ask(text){
   await new Promise(resolve=>setTimeout(resolve,10000));
 
   dot.classList.add('thinking');
+  dot.style.filter='contrast(1.8) brightness(1.5)';
   status.classList.add('on');
 
   try{
@@ -242,7 +295,8 @@ body:JSON.stringify({message:text,bubble:bubbleMode})
 
     status.classList.remove('on');
     dot.classList.remove('thinking');
-
+    dot.style.filter='';
+    
     shapes();
 
     setTimeout(()=>show(d.reply||'Dotty has nothing to say.'),700);
@@ -250,6 +304,7 @@ body:JSON.stringify({message:text,bubble:bubbleMode})
   }catch(e){
     status.classList.remove('on');
     dot.classList.remove('thinking');
+    dot.style.filter='';
 
     shapes();
 
