@@ -338,8 +338,40 @@ function glope(){
   }
 }
 function shapes(){
-  const shapeTypes=['circle','square','triangle','star','blob'];
+  const shapeTypes=['circle','square','triangle','star','hexagon'];
   const shapeColors=['#28ff88','#ffe04a','#c45cff','#38a8ff','#ff304f'];
+
+  for(let i=0;i<5;i++){
+    let e=document.createElement('div');
+
+    let t=shapeTypes[Math.random()*shapeTypes.length|0];
+    let c=shapeColors[Math.random()*shapeColors.length|0];
+
+    e.className='shape '+t;
+
+    e.style.setProperty('--c',c);
+    e.style.setProperty('--s',18+Math.random()*42+'px');
+
+    e.style.setProperty('--tx',Math.random()*100+'vw');
+    e.style.setProperty('--ty',Math.random()*100+'vh');
+
+    e.style.setProperty('--d','9s');
+
+    e.style.setProperty(
+      '--r',
+      Math.random()*1440-720+'deg'
+    );
+
+    e.style.left='50%';
+    e.style.top='50%';
+
+    e.style.animationDelay=i*.25+'s';
+
+    w.appendChild(e);
+
+    setTimeout(()=>e.remove(),9500);
+  }
+}
 
 for(let i=0;i<70;i++){
     let e=document.createElement('div');
