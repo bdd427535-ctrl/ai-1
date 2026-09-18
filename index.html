@@ -404,9 +404,20 @@ function show(text){
     speechSynthesis.cancel();
 
     const voice=new SpeechSynthesisUtterance(text);
-    voice.rate=1;
-    voice.pitch=bubbleMode ? 0.85 : 1;
-    voice.volume=1;
+  const voice=new SpeechSynthesisUtterance(text);
+
+if(bubbleMode){
+  // Bubble: deeper, slower, smug
+  voice.rate=0.85;
+  voice.pitch=0.65;
+}else{
+  // Dotty: energetic and theatrical
+  voice.rate=1.15;
+  voice.pitch=1.35;
+}
+
+voice.volume=1;
+speechSynthesis.speak(voice);
 
     speechSynthesis.speak(voice);
   },800);
