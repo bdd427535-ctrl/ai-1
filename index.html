@@ -154,6 +154,39 @@
     transform:translate(-50%,-50%) rotate(var(--r)) scale(1);
   }
 }
+  #dotBox{
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:78vw;
+  height:32vh;
+  transform:translate(-50%,-50%);
+  border:2px solid #fff;
+  box-shadow:
+    0 0 3px #fff,
+    0 0 8px #fff8;
+  z-index:9;
+  pointer-events:none;
+}
+
+#dotBox::before{
+  content:"";
+  position:absolute;
+  inset:7px;
+  border:2px solid #fff;
+  box-shadow:0 0 5px #fff8;
+}
+
+#dotBox::after{
+  content:"";
+  position:absolute;
+  left:0;
+  right:0;
+  top:50%;
+  height:1px;
+  background:#fff8;
+  opacity:.35;
+}
 #status{position:absolute;left:50%;top:calc(50% + 35px);transform:translateX(-50%);font-size:11px;letter-spacing:3px;color:#555;opacity:0}
   .switch-orb{
   position:absolute;
@@ -257,12 +290,14 @@
   <input id="codeInput" type="password" placeholder="Enter password">
   <button id="codeButton">Enter</button>
   <p id="codeError"></p>
-</div><div id="world"><div id="dot"></div><div id="status">THINKING</div><div id="answer"></div>
+</div<div id="world">
+<div id="dotBox"></div>
+<div id="dot"></div><div id="status">THINKING</div><div id="answer"></div>
 <form id="input"><input id="msg" placeholder="Talk to Dotty..." autocomplete="off"><button id="send">➜</button></form>
 <button id="switchButton">●</button>
 </div>
 <script>
-const w=document.getElementById('world'),dot=document.getElementById('dot'),msg=document.getElementById('msg'),answer=document.getElementById('answer'),status=document.getElementById('status'),switchButton=document.getElementById('switchButton')
+const w=document.getElementById('world'),dot=document.getElementById('dot'),dotBox=document.getElementById('dotBox'),msg=document.getElementById('msg'),answer=document.getElementById('answer'),status=document.getElementById('status'),switchButton=document.getElementById('switchButton')
 let bubbleMode=false;
 let switching=false;
 
@@ -291,10 +326,12 @@ switchButton.addEventListener('click',()=>{
     if(bubbleMode){
       dot.style.background='#2080ff';
       dot.style.boxShadow='0 0 10px #2080ff,0 0 30px #2080ff,0 0 60px #2080ff66';
+      dotBox.style.display='none';
       switchButton.style.background='#32105f';
     }else{
       dot.style.background='#f22';
       dot.style.boxShadow='0 0 10px #f22,0 0 30px #f22,0 0 60px #f224';
+      dotBox.style.display='block';
       switchButton.style.background='#5b16a8';
     }
 
