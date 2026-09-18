@@ -453,29 +453,6 @@ async function ask(text){
   }
 }
 
-    let d=await r.json();
-    if(!r.ok)throw Error(d.error);
-
-    await new Promise(resolve=>setTimeout(resolve,1200));
-
-    status.classList.remove('on');
-    dot.classList.remove('thinking');
-    dot.style.filter='';
-    
-    shapes();
-
-    setTimeout(()=>show(d.reply||'Dotty has nothing to say.'),700);
-
-  }catch(e){
-    status.classList.remove('on');
-    dot.classList.remove('thinking');
-    dot.style.filter='';
-
-    shapes();
-
-    setTimeout(()=>show('Something went wrong. Dotty blames the universe.'),700);
-  }
-}
 document.getElementById('input').onsubmit=e=>{e.preventDefault();let t=msg.value.trim();if(!t)return;msg.value='';clearAnswer();ask(t)}
 const lockScreen = document.getElementById("lockScreen");
 const codeInput = document.getElementById("codeInput");
@@ -491,7 +468,7 @@ codeButton.addEventListener("click", () => {
     codeInput.focus();
   }
 });
-
+  
 codeInput.addEventListener("keydown", (event) => {
   if (event.key === "Enter") {
     codeButton.click();
