@@ -419,6 +419,7 @@ function show(text){
     speechSynthesis.speak(voice);
   },800);
 }
+async function ask(text){
   glope();
 
   // Start thinking immediately
@@ -459,7 +460,6 @@ function show(text){
     setTimeout(()=>show('Something went wrong. Dotty blames the universe.'),700);
   }
 }
-
 document.getElementById('input').onsubmit=e=>{e.preventDefault();let t=msg.value.trim();if(!t)return;msg.value='';clearAnswer();ask(t)}
 const lockScreen = document.getElementById("lockScreen");
 const codeInput = document.getElementById("codeInput");
