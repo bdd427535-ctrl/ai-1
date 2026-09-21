@@ -428,7 +428,7 @@ async function ask(text){
   status.classList.add('on');
 
   // Let the glope happen before getting the answer
-  await new Promise(resolve=>setTimeout(resolve,10000));
+  await new Promise(resolve=>setTimeout(resolve,3000));
 
   try{
     let r=await fetch('/api/chat',{
@@ -440,7 +440,7 @@ async function ask(text){
     let d=await r.json();
     if(!r.ok)throw Error(d.error);
 
-    await new Promise(resolve=>setTimeout(resolve,1200));
+    await new Promise(resolve=>setTimeout(resolve,300));
 
     status.classList.remove('on');
     dot.classList.remove('thinking');
