@@ -422,23 +422,38 @@ function show(text){
 async function ask(text){
   glope();
 
-  // Start thinking immediately
   dot.classList.add('thinking');
   dot.style.filter='contrast(1.8) brightness(1.5)';
   status.classList.add('on');
 
-  // Let the glope happen before getting the answer
   await new Promise(resolve=>setTimeout(resolve,3000));
 
   try{
     let r=await fetch('/api/chat',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({message:text,bubble:bubbleMode})
+      body:JSON.stringify({
+        message:text,
+        bubble:bubbleMode
+      })
     });
 
-    let d=await r.json();
-    if(!r.ok)throw Error(d.error);
+    let raw=await r.text();
+
+    console.log("SERVER STATUS:",r.status);
+    console.log("SERVER RESPONSE:",raw);
+
+    let d;
+
+    try{
+      d=JSON.parse(raw);
+    }catch{
+      throw Error("Server returned: " + raw);
+    }
+
+    if(!r.ok){
+      throw Error(d.error || "Server error " + r.status);
+    }
 
     await new Promise(resolve=>setTimeout(resolve,300));
 
@@ -448,10 +463,12 @@ async function ask(text){
 
     shapes();
 
-    setTimeout(()=>show(d.reply||'Dotty has nothing to say.'),700);
+    setTimeout(()=>{
+      show(d.reply || 'Dotty has nothing to say.');
+    },700);
 
-}catch(e){
-    console.error("DOTTY ERROR:", e);
+  }catch(e){
+    console.error("DOTTY ERROR:",e);
 
     status.classList.remove('on');
     dot.classList.remove('thinking');
@@ -459,8 +476,10 @@ async function ask(text){
 
     shapes();
 
-    setTimeout(()=>show("ERROR: " + (e.message || "Unknown error")),700);
-}
+    setTimeout(()=>{
+      show("ERROR: " + e.message);
+    },700);
+  }
 }
 document.getElementById('input').onsubmit=e=>{e.preventDefault();let t=msg.value.trim();if(!t)return;msg.value='';clearAnswer();ask(t)}
 const lockScreen = document.getElementById("lockScreen");
