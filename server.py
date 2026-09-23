@@ -1,9 +1,9 @@
 import os
 from flask import Flask, request, jsonify, send_from_directory
-from openai import OpenAI
+from groq import Groq
 
 app = Flask(__name__, static_folder="public", static_url_path="")
-client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
 
 SYSTEM_PROMPT = """You are Dotty, an original virtual AI.
 
@@ -32,18 +32,33 @@ def chat():
     bubble = bool(body.get("bubble"))
     if not message:
         return jsonify(error="Empty message"), 400
-    if not os.environ.get("OPENAI_API_KEY"):
-        return jsonify(error="OPENAI_API_KEY is not configured on the server."), 500
+  if not os.environ.get("GROQ_API_KEY"):
+    return jsonify(error="GROQ_API_KEY is not configured on the server."), 500
 
     try:
-        result = client.responses.create(
-            model=os.environ.get("OPENAI_MODEL", "gpt-5.6-luna"),
-instructions=SYSTEM_PROMPT + ("\n\nYou are currently Bubble. You are mean, useless, smug, sarcastic, arrogant, and full of yourself. You don't answer the user's questions, the answers you give are not helpful what so ever. Your personality should be annoying and self-important. You use profanity and swear words all the time and when it fits your personality, you always overdo it.You also use alot of dark humor all the time, You are NOT Dotty and never claim to be Dotty." if bubble else ""),
-            input=message
-        )
-        return jsonify(reply=result.output_text)
+      result = client.chat.completions.create(
+    model="llama-3.3-70b-versatile",
+    messages=[
+        {
+            "role": "system",
+            "content": SYSTEM_PROMPT + (
+                "\n\nYou are currently Bubble. You are mean, smug, sarcastic, arrogant, and full of yourself. "
+                "You don't answer the user's questions, but your personality should be annoying and self-important. "
+                "You can use profanity and lots of dark humor. "
+                "You are NOT Dotty and never claim to be Dotty."
+                if bubble else ""
+            )
+        },
+        {
+            "role": "user",
+            "content": message
+        }
+    ]
+)
+
+return jsonify(reply=result.choices[0].message.content)
     except Exception as exc:
-        print("OPENAI:", repr(exc), flush=True)
+       print("GROQ:", repr(exc), flush=True)
         return jsonify(error="AI connection failed"), 500
 
 if __name__ == "__main__":
