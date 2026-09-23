@@ -450,15 +450,17 @@ async function ask(text){
 
     setTimeout(()=>show(d.reply||'Dotty has nothing to say.'),700);
 
-  }catch(e){
+}catch(e){
+    console.error("DOTTY ERROR:", e);
+
     status.classList.remove('on');
     dot.classList.remove('thinking');
     dot.style.filter='';
 
     shapes();
 
-    setTimeout(()=>show('Something went wrong. Dotty blames the universe.'),700);
-  }
+    setTimeout(()=>show("ERROR: " + (e.message || "Unknown error")),700);
+}
 }
 document.getElementById('input').onsubmit=e=>{e.preventDefault();let t=msg.value.trim();if(!t)return;msg.value='';clearAnswer();ask(t)}
 const lockScreen = document.getElementById("lockScreen");
